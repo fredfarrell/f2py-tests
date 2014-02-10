@@ -1,5 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
+import matplotlib.animation as animation
 import tridiag
 
 #define parameters
@@ -32,9 +33,8 @@ f = open('init.dat','w')
 for x in c_new:
     f.write('{0}\n'.format(x))
 
-
-for i in range(tfinal):
-    
+def timestep():    
+    """advance the simualtion 1 timestep"""
     c_old[:]=c_new
     
     #fill a,b,c,d arrays
@@ -59,17 +59,30 @@ for i in range(tfinal):
 
     c_new = tridiag.solve_tridiag(a,b,c,d)
 
-
-g = open('final_python.dat','w')
-
-#write initial condition to a file
-for x in c_new:
-    g.write('{0}\n'.format(x))
-
-ax = plt.axes(xlim=(0,N),ylim=(0,1))
+#begin animation routines
 xaxis = np.arange(N)
-ax.plot(xaxis,c_new,'b-',lw=2)
-plt.xlabel("x")
+
+fig = plt.figure()
+ax = fig.add_subplot(111, aspect='equal', autoscale_on=False,
+                     xlim=(0, N), ylim=(0, 1))
+ax.grid()
+
+line, = ax.plot([], [], 'b-', lw=2)
+    
+def init():
+    """initialize animation"""
+    line.set_data([], [])
+    return line,
+
+def animate(i):
+    """perform animation step"""
+    timestep()
+    line.set_data(xaxis,c_new)
+    return line,
+
+ani = animation.FuncAnimation(fig, animate, frames=300,
+                              interval=100, blit=True, init_func=init)
+
 plt.show()
 
 

@@ -1,4 +1,5 @@
 import numpy as np
+from matplotlib import pyplot as plt
 import tridiag
 
 #define parameters
@@ -59,11 +60,16 @@ for i in range(tfinal):
     c_new = tridiag.solve_tridiag(a,b,c,d)
 
 
-g = open('final.dat','w')
+g = open('final_python.dat','w')
 
 #write initial condition to a file
 for x in c_new:
     g.write('{0}\n'.format(x))
 
+ax = plt.axes(xlim=(0,N),ylim=(0,1))
+xaxis = np.arange(N)
+ax.plot(xaxis,c_new,'b-',lw=2)
+plt.xlabel("x")
+plt.show()
 
 

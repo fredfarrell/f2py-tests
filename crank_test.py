@@ -7,7 +7,7 @@ import tridiag
 N=10000
 
 dx=0.4
-dt=0.1
+dt=0.2
 
 Diff=100.0
 
@@ -33,8 +33,9 @@ f = open('init.dat','w')
 for x in c_new:
     f.write('{0}\n'.format(x))
 
-def timestep():    
-    """advance the simualtion 1 timestep"""
+#loop through time
+for i in range(tfinal):   
+
     c_old[:]=c_new
     
     #fill a,b,c,d arrays
@@ -59,30 +60,10 @@ def timestep():
 
     c_new = tridiag.solve_tridiag(a,b,c,d)
 
-#begin animation routines
-xaxis = np.arange(N)
+g = open('final.dat','w')
 
-fig = plt.figure()
-ax = fig.add_subplot(111, aspect='equal', autoscale_on=False,
-                     xlim=(0, N), ylim=(0, 1))
-ax.grid()
-
-line, = ax.plot([], [], 'b-', lw=2)
-    
-def init():
-    """initialize animation"""
-    line.set_data([], [])
-    return line,
-
-def animate(i):
-    """perform animation step"""
-    timestep()
-    line.set_data(xaxis,c_new)
-    return line,
-
-ani = animation.FuncAnimation(fig, animate, frames=300,
-                              interval=100, blit=True, init_func=init)
-
-plt.show()
+#write final condition to a file
+for x in c_new:
+    g.write('{0}\n'.format(x))
 
 
